@@ -1,0 +1,51 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Xmc</title>
+
+    <link href="@Url.Content("~/Content/kendo/2017.2.504/kendo.common.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/kendo/2017.2.504/kendo.uniform.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.2.504/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+     
+    @RenderSection("Scripts", false) 
+   
+    <script src="@Url.Content("~/Scripts/jquery-1.12.3.min.js")"></script> 
+    <script src="@Url.Content("~/Scripts/kendo/2017.2.504/kendo.all.min.js")"></script>  
+     
+ 
+    <script src="@Url.Content("~/Scripts/kendo/2017.2.504/messages/kendo.messages.he-IL.min.js")"></script> 
+    <script src="@Url.Content("~/Scripts/kendo/2017.2.504/cultures/kendo.culture.he-IL.min.js")"></script>
+
+
+
+    <script>
+        kendo.culture("he-IL");
+        kendo.ui.Grid.prototype.options.messages.editable.confirmation = "האם אתה בטוח שברצונך למחוק ?";
+    </script>
+
+</head>
+<body>
+    <div class="k-rtl">
+
+        <div id="grid"></div>
+    </div>
+    @*<div class="container-fluid">
+        <div class="row taxonomy"> </div>
+        <div class="row">
+            <div class="col-xs-18 col-md-12">
+                
+            </div>
+        </div>
+    </div>*@
+
+    @RenderBody()
+
+    @*<footer class="footer">
+            <div class="container-fluid">
+                <p class="text-muted">  </p>
+            </div>
+        </footer>*@
+
+</body>
+</html>

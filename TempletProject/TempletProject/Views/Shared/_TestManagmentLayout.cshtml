@@ -1,0 +1,38 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Test</title>
+
+    <link href="@Url.Content("~/Content/kendo/2017.2.504/kendo.common.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/kendo/2017.2.504/kendo.uniform.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/2017.2.504/kendo.rtl.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/style.css")" rel="stylesheet" type="text/css" />
+   
+   
+     
+    @RenderSection("Scripts", false) 
+   
+    <script src="@Url.Content("~/Scripts/jquery-1.12.3.min.js")"></script> 
+    <script src="@Url.Content("~/Scripts/kendo/2017.2.504/kendo.all.min.js")"></script> 
+     
+ 
+    <script src="@Url.Content("~/Scripts/kendo/2017.2.504/messages/kendo.messages.he-IL.min.js")"></script> 
+    <script src="@Url.Content("~/Scripts/kendo/2017.2.504/cultures/kendo.culture.he-IL.min.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+  
+    <script src="@Url.Content("~/Scripts/app/common.js")"></script>
+    <script>
+        kendo.culture("he-IL");
+        kendo.ui.Grid.prototype.options.messages.editable.confirmation = "האם אתה בטוח שברצונך למחוק ?";
+    </script>
+  
+</head>
+<body>
+    
+        @RenderBody()
+     
+</body>
+</html>

@@ -1,0 +1,295 @@
+﻿@model TempletProject.ViewModels.TestViewModel
+
+@{
+    ViewBag.Title = "טבלה";
+    Layout = "~/Views/Shared/_TestManagmentLayout.cshtml";
+}
+
+<script src="@Url.Content("~/Scripts/app/TestEditor.js")"></script>
+<div class="col-md-12">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-xs-6">
+                <div class="panel panel-default k-rtl">
+                    @*<div class="panel-heading">כותרת</div>*@
+                    <div class="panel-body">
+                        <div id="grid" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="panel panel-default">
+                    @*<div class="panel-heading k-rtl">כותרת</div>*@
+                    <div class="panel-body">
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+    <div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default k-rtl">
+            @*<div class="panel-heading">כותרת</div>*@
+            <div class="panel-body">
+                <div id="bubblesgrid"></div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+
+    var model =  @Html.Raw(Json.Encode(Model));
+
+    window.TestEditor = new app.TestEditor($("#grid"), model,
+    {
+        read: "@Url.Action("GetTests")",
+        create: "@Url.Action("AddTest")",
+        update: "@Url.Action("UpdateTest")",
+        destroy: "@Url.Action("DeleteTest")"
+    });
+
+    window.TestEditor.load();
+
+
+</script>
+
+
+<script>
+    var width = $("#chart").parent().width();
+
+    $("#chart").kendoChart({
+       
+        series: [{
+            name: "נתונים שנתיים",
+            data: [15.7, 16.7, 20, 23.5, 26.6,30]
+        }],
+        categoryAxis: {
+            categories: [2005, 2006, 2007, 2008, 2009,2010]
+        },
+        tooltip: {
+            visible: true,
+            format: "{0}%",
+            template: "#= series.name #: #= value #"
+        } ,
+        chartArea: {
+            width: width,
+            height: 250
+        }
+    });  
+</script>
+
+ 
+
+ 
+<script>
+    $(function () {
+
+            var json =  [
+          {
+              "Subject1": "30-",
+              "Image1": "bubble4",
+              "Subject2": "8-",
+              "Image2": "bubble4",
+              "Subject3": "27-",
+              "Image3": "bubble4",
+              "Subject4": "14-",
+              "Image4": "bubble4",
+              "Subject5": "5",
+              "Image5": "bubble5",
+              "Subject6": "11-",
+              "Image6": "bubble4",
+              "Subject7": "26-", 
+              "Image7": "bubble4",
+              "Subject8": "20-",
+              "Image8": "bubble4",
+              "Subject9": "207",
+              "Image9": "star-5-points",
+              "Subject10": "10",
+              "Image10": "bubble4",
+              "Subject11": "6-",
+              "Image11": "bubble4",
+              "Branch": "סניף 1"
+          },
+          {
+              "Subject1": "30-",
+              "Image1": "bubble4",
+              "Subject2": "21",
+              "Image2": "bubble2",
+              "Subject3": "15-",
+              "Image3": "bubble4",
+              "Subject4": "26",
+              "Image4": "bubble2",
+              "Subject5": "3",
+              "Image5": "bubble5",
+              "Subject6": "933-",
+              "Image6": "bubble1",
+              "Subject7": "215", 
+              "Image7": "star-5-points",
+              "Subject8": "23-",
+              "Image8": "bubble4",
+              "Subject9": "94-",
+              "Image9": "bubble3",
+              "Subject10": "20-",
+              "Image10": "bubble4",
+              "Subject11": "16-",
+              "Image11": "bubble4",
+              "Branch": "סניף 2"
+          },
+          {
+              "Subject1": "78-",
+              "Image1": "bubble3",
+              "Subject2": "852-",
+              "Image2": "bubble1",
+              "Subject3": "13-",
+              "Image3": "bubble4",
+              "Subject4": "150-",
+              "Image4": "bubble3",
+              "Subject5": "0",
+              "Image5": "bubble5",
+              "Subject6": "95-", 
+              "Image6": "bubble3",
+              "Subject7": "138-",
+              "Image7": "bubble3",
+              "Subject8":"51-",
+              "Image8": "bubble3",
+              "Subject9": "111-",
+              "Image9": "bubble3",
+              "Subject10": "24",
+              "Image10": "bubble2",
+              "Subject11": "158",
+              "Image11": "star-5-points",
+              "Branch": "סניף 3"
+          },
+          {
+              "Subject1": "25-",
+              "Image1": "bubble4",
+              "Subject2": "23",
+              "Image2": "bubble2",
+              "Subject3": "1",
+              "Image3": "bubble5",
+              "Subject4": "185",
+              "Image4": "star-5-points",
+              "Subject5": "13",
+              "Image5": "bubble2",
+              "Subject6": "5",
+              "Image6": "bubble2",
+              "Subject7": "10", 
+              "Image7": "bubble2",
+              "Subject8": "4",
+              "Image8": "bubble5",
+              "Subject9": "28",
+              "Image9": "bubble2",
+              "Subject10": "459-",
+              "Image10": "bubble1",
+              "Subject11": "117-",
+              "Image11": "bubble3",
+              "Branch": "סניף 4"
+          },
+          {
+              "Subject1": "22-",
+              "Image1": "bubble4",
+              "Subject2": "24",
+              "Image2": "bubble2",
+              "Subject3": "14",
+              "Image3": "bubble2",
+              "Subject4": "5",
+              "Image4": "bubble2",
+              "Subject5": "5",
+              "Image5": "bubble5",
+              "Subject6": "22-",
+              "Image6": "bubble4",
+              "Subject7": "384-", 
+              "Image7": "bubble1",
+              "Subject8": "21-",
+              "Image8": "bubble4",
+              "Subject9": "137-",
+              "Image9": "bubble3",
+              "Subject10": "17",
+              "Image10": "bubble2",
+              "Subject11": "25",
+              "Image11": "bubble2",
+              "Branch": "סניף 5"
+          },
+          {
+              "Subject1": "6-",
+              "Image1": "bubble4",
+              "Subject2": "7-",
+              "Image2": "bubble4",
+              "Subject3": "24-",
+              "Image3": "bubble4",
+              "Subject4": "238",
+              "Image4": "star-5-points",
+              "Subject5": "5",
+              "Image5": "bubble5",
+              "Subject6": "87",
+              "Image6": "star-5-points",
+              "Subject7": "21-", 
+              "Image7": "bubble4",
+              "Subject8": "1",
+              "Image8": "bubble5",
+              "Subject9": "77-",
+              "Image9": "bubble3",
+              "Subject10": "9",
+              "Image10": "bubble2",
+              "Subject11": "186-",
+              "Image11": "bubble3",
+              "Branch": "סניף 6"
+          }
+            ]
+
+            $("#bubblesgrid").kendoGrid({
+
+                dataSource: {
+                    data: json,
+                    schema: {
+                        model: {
+                            fields: {
+                                Branch: { type: "string" },
+                                Subject1: { type: "string" },
+                                Subject2: { type: "string" },
+                                Subject3: { type: "string" },
+                                Subject4: { type: "string" },
+                                Subject5: { type: "string" },
+                                Subject6: { type: "string" },
+                                Subject7: { type: "string" },
+                                Subject8: { type: "string" },
+                                Subject9: { type: "string" },
+                                Subject10: { type: "string" }
+
+                            }
+                        }
+                    },
+                },
+
+                height: 600,
+                
+                resizable: true,
+                autoSync: true,
+                columns: [
+
+                     { field: "Branch", title: " ", width: "65px" },
+
+                    { field: "Subject1", title: "נושא 1", width: "65px", template: "<div class='imageContainer  #=Image1#'></div><span style='display: block;'>#=Subject1#</span>" },
+                    { field: "Subject2", title: "נושא 2", width: "65px", template: "<div class='imageContainer  #=Image2#'></div><span style='display: block;'>#=Subject2#</span>" },
+                    { field: "Subject3", title: "נושא 3", width: "65px", template: "<div class='imageContainer  #=Image3#'></div><span style='display: block;'>#=Subject3#</span>" },
+                    { field: "Subject4", title: "נושא 4", width: "65px", template: "<div class='imageContainer  #=Image4#'></div><span style='display: block;'>#=Subject4#</span>" },
+                    { field: "Subject5", title: "נושא 5", width: "65px", template: "<div class='imageContainer  #=Image5#'></div><span style='display: block;'>#=Subject5#</span>" },
+                    { field: "Subject6", title: "נושא 6", width: "65px", template: "<div class='imageContainer  #=Image6#'></div><span style='display: block;'>#=Subject6#</span>" },
+                    { field: "Subject7", title: "נושא 7", width: "65px", template: "<div class='imageContainer  #=Image7#'></div><span style='display: block;'>#=Subject7#</span>" },
+                    { field: "Subject8", title: "נושא 8", width: "65px", template: "<div class='imageContainer  #=Image8#'></div><span style='display: block;'>#=Subject8#</span>" },
+                    { field: "Subject9", title: "נושא 9", width: "65px", template: "<span style='display: block;'><div class='imageContainer  #=Image9#'></div>#=Subject9#</span>" },
+                    { field: "Subject10", title: "נושא 10", width: "65px", template: "<div class='imageContainer  #=Image10#'></div><span style='display: block;'>#=Subject10#</span>" },
+                    { field: "Subject11", title: "נושא 11", width: "65px", template: "<div class='imageContainer  #=Image11#'></div><span style='display: block;'>#=Subject11 #</span>" }
+
+                ]
+            });
+              
+        });
+</script>
+
+  
