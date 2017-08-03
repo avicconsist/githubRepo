@@ -1,0 +1,141 @@
+﻿
+@model XMSTaxonomyManagment.ViewModels.TaxonomyMainViewModel
+@{
+    ViewBag.Title = "ניהול טקסונומיה";
+    Layout = "~/Views/Shared/_TaxonomyManagmentLayout.cshtml";
+}
+
+<link href="@Url.Content("~/Content/xms.taxsonomy.css")" rel="stylesheet" />
+
+<div id="tabstrip" class="k-rtl">
+    <ul>
+        <li name="taxonomyEditor">עריכת טקסונומיה</li>
+        <li name="localEntityEditor">עריכת ישויות</li>
+        <li name="taxonomyReportEditor">עריכת דוחות טקסונומיה</li>
+        <li name="localReportEditor">עריכת דוחות טקסונומיה מקומיים</li>
+    </ul>
+    <div>
+        <div class="k-rtl">
+            <div id="taxonomyGrid"></div>
+        </div>
+        <script src="@Url.Content("~/Scripts/app/taxonomyEditor.js")"></script>
+
+    </div>
+    <div>
+
+        <script src="@Url.Content("~/Scripts/app/localEntityEditor.js")"></script>
+        <div id="localEntityGrid"></div>
+
+    </div>
+    <div>
+
+        <script src="@Url.Content("~/Scripts/app/taxonomyReportEditor.js")"></script>
+        <select class="taxonomyForTaxonomyReport"></select>
+        <div id="taxonomyReportGrid"></div>
+
+    </div>
+    <div>
+
+        <script src="@Url.Content("~/Scripts/app/localReportEditor.js")"></script>
+        <select class="taxonomyForLocalReport"></select>
+        <div id="localReportGrid"></div>
+
+    </div>
+</div>
+
+<script>
+
+  
+    function onShow(e) {
+
+        switch ($(e.item).attr("name")) {
+
+            case "taxonomyEditor":
+                if (window.taxonomyEditor===undefined) {
+                    window.taxonomyEditor = new app.taxonomyEditor($("#taxonomyGrid"), null,
+                     {
+                         read: "@Url.Action("GetTaxonomies", "Taxonomy")",
+                         create: "@Url.Action("AddTaxonomies","Taxonomy")",
+                         update: "@Url.Action("UpdateTaxonomies","Taxonomy")",
+                         destroy: "@Url.Action("DeleteTaxonomies","Taxonomy")"
+                     });
+
+                    window.taxonomyEditor.load();
+                }
+                break;
+
+            case "localReportEditor":
+                if (window.localReportEditor===undefined) {
+                    var model =  @Html.Raw(Json.Encode(Model.LocalReport));
+
+                    window.localReportEditor = new app.localReportEditor($("#localReportGrid"),$(".taxonomyForLocalReport"), model,
+                        {
+                            read: "@Url.Action("GetLocalReportsByTaxonomyId", "LocalReport")",
+                            create: "@Url.Action("AddLocalReport", "LocalReport")",
+                            update: "@Url.Action("UpdateLocalReport", "LocalReport")",
+                            destroy: "@Url.Action("DeleteLocalReport", "LocalReport")",
+                            getPeriodTypes: "@Url.Action("GetPeriodTypes", "PeriodType")",
+                            getLocalEntities: "@Url.Action("GetEntityIdentifire", "LocalEntity")",
+                            getSourceIds: "@Url.Action("GetTaxonomyReportsIdAndDescriptionByTaxonomyId", "TaxonomyReport")"
+                        });
+
+                    window.localReportEditor.load();
+                    
+                }
+                break;
+
+            case"localEntityEditor":
+                if (window.localEntityEditor===undefined) {
+                    window.localEntityEditor = new app.localEntityEditor($("#localEntityGrid"), null,
+                {
+                    read: "@Url.Action("GetLocalEntities", "LocalEntity")",
+                    create: "@Url.Action("AddLocalEntity", "LocalEntity")",
+                    update: "@Url.Action("UpdateLocalEntities", "LocalEntity")",
+                    destroy: "@Url.Action("DeleteLocalEntity", "LocalEntity")"
+                });
+
+                    window.localEntityEditor.load();
+                   
+                }
+                break;
+
+            case "taxonomyReportEditor":
+                if (window.taxonomyReportEditor===undefined) {
+                    var model =  @Html.Raw(Json.Encode(Model.TaxonomyReport));
+
+                    window.taxonomyReportEditor = new app.taxonomyReportEditor($("#taxonomyReportGrid"),$(".taxonomyForTaxonomyReport"), model,
+                {
+                    read: "@Url.Action("GetTaxonomyReportsByTaxonomyId","TaxonomyReport")",
+                    create: "@Url.Action("AddTaxonomyReports","TaxonomyReport")",
+                    update: "@Url.Action("UpdateTaxonomyReports","TaxonomyReport")",
+                    destroy: "@Url.Action("DeleteTaxonomyReport","TaxonomyReport")",
+                    getPeriodTypes: "@Url.Action("GetPeriodTypes", "PeriodType")"
+                });
+
+                    window.taxonomyReportEditor.load();
+
+                }
+                break;
+            default:
+
+                break;
+
+        }
+    }
+    $("#tabstrip").kendoTabStrip({
+        show: onShow,
+        animation: {
+            close: {
+                duration: 100,
+                effects: "fadeOut"
+            },
+
+            open: {
+                duration: 100,
+                effects: "fadeIn"
+            }
+        }
+    }).data("kendoTabStrip").select(0);
+
+
+</script>

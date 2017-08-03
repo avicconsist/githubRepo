@@ -1,0 +1,38 @@
+﻿@model XMSTaxonomyManagment.ViewModels.TaxonomyReportMainViewModel
+
+@{
+    ViewBag.Title = "ניהול דוחות טקסונומיה";
+    Layout = "~/Views/Shared/_TaxonomyManagmentLayout.cshtml";
+}
+
+
+<script src="@Url.Content("~/Scripts/app/taxonomyReportEditor.js")"></script>  
+
+<link href="@Url.Content("~/Content/xms.taxsonomy.css")" rel="stylesheet" />
+<div>
+    <label class="taxonomylable" >טקסונומיה</label>
+    <select class="taxonomy"></select>
+</div>
+
+<div id="grid"></div>   
+
+<script type="text/javascript">
+
+  
+    var model =  @Html.Raw(Json.Encode(Model));
+
+    window.taxonomyReportEditor = new app.taxonomyReportEditor($("#grid"), $(".taxonomy"), model,
+    {
+        read: "@Url.Action("GetTaxonomyReportsByTaxonomyId")",
+        create: "@Url.Action("AddTaxonomyReports")",
+        update: "@Url.Action("UpdateTaxonomyReports")",
+        destroy: "@Url.Action("DeleteTaxonomyReport")",
+        getPeriodTypes: "@Url.Action("GetPeriodTypes", "PeriodType")"
+    });
+
+    window.taxonomyReportEditor.load();
+
+</script>
+
+
+

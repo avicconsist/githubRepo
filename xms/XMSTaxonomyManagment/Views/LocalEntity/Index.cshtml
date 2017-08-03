@@ -1,0 +1,21 @@
+﻿@model XMSTaxonomyManagment.ViewModels.LocalEntityViewModel
+
+@{
+    ViewBag.Title = "ניהול ישויות";
+    Layout = "~/Views/Shared/_TaxonomyManagmentLayout.cshtml";
+}
+ 
+<script src="@Url.Content("~/Scripts/app/localEntityEditor.js")"></script> 
+<div id="grid"></div>
+<script type="text/javascript">
+
+    window.localEntityEditor = new app.localEntityEditor($("#grid"), null,
+    {
+        read: "@Url.Action("GetLocalEntities")",
+        create: "@Url.Action("AddLocalEntity")",
+        update: "@Url.Action("UpdateLocalEntities")",
+        destroy: "@Url.Action("DeleteLocalEntity")"
+    });
+
+    window.localEntityEditor.load();
+</script>

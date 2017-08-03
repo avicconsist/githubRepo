@@ -1,0 +1,35 @@
+﻿@model XMSTaxonomyManagment.ViewModels.LocalReportMainViewModel
+
+@{
+    ViewBag.Title = "ניהול דוחות טקסונומיה";
+    Layout = "~/Views/Shared/_TaxonomyManagmentLayout.cshtml";
+}
+
+<script src="@Url.Content("~/Scripts/app/localReportEditor.js")"></script>
+<link href="@Url.Content("~/Content/xms.taxsonomy.css")" rel="stylesheet" />
+
+<div>
+    <label class="taxonomylable">טקסונומיה</label>
+    <select class="taxonomy"></select>
+</div>
+<div id="grid"></div>
+
+
+<script type="text/javascript">
+
+    var model =  @Html.Raw(Json.Encode(Model));
+
+    window.localReportEditor = new app.localReportEditor($("#grid"), $(".taxonomy"), model,
+    {
+        read: "@Url.Action("GetLocalReportsByTaxonomyId")",
+        create: "@Url.Action("AddLocalReport")",
+        update: "@Url.Action("UpdateLocalReport")",
+        destroy: "@Url.Action("DeleteLocalReport")",
+        getPeriodTypes: "@Url.Action("GetPeriodTypes", "PeriodType")",
+        getLocalEntities: "@Url.Action("GetEntityIdentifire", "LocalEntity")",
+        getSourceIds: "@Url.Action("GetTaxonomyReportsIdAndDescriptionByTaxonomyId", "TaxonomyReport")"
+    });
+
+    window.localReportEditor.load();
+        
+</script>
