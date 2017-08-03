@@ -110,8 +110,8 @@ a {
     background-color: rgba(255,255,255,0.5);
     box-shadow: inset 3px 3px 30px 6px #F2483E;
     border-radius: 50%;
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
     line-height: 55pt;
 }
 
@@ -158,75 +158,15 @@ a {
     height: 30px;
     line-height: 25pt;
 }
-
-
-.star-5-points {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    width: 0;
-    height: 0;
-    position: relative;
-    margin: 0px -33px 0px 0px;
-    border: 100px solid rgba(0,0,0,0);
-    border-top: 0 solid;
-    border-bottom: 70px solid #FF8811;
-    font: normal 100%/normal Arial, Helvetica, sans-serif;
-   
-    -o-text-overflow: clip;
-    text-overflow: clip;
-    -webkit-transform: rotateZ(35deg);
-    transform: rotateZ(35deg);
-    -moz-transform: rotate(35deg) scale(.3);
-    -webkit-transform: rotate(35deg) scale(.3);
-    -ms-transform: rotate(35deg) scale(.3);
-    -o-transform: rotate(35deg) scale(.3);
+.star {
+    background-image: url(../Images/star.PNG);
+    display: inline-block;
+    line-height: 25pt;
+    height: 69px;
+    width: 71px;
 }
 
-    .star-5-points::before {
-        -webkit-box-sizing: content-box;
-        -moz-box-sizing: content-box;
-        box-sizing: content-box;
-        width: 0;
-        height: 0;
-        position: absolute;
-        content: "";
-        top: -45px;
-        left: -65px;
-        border: 30px solid rgba(0,0,0,0);
-        border-top: 0 solid;
-        border-bottom: 80px solid #FF8811;
-        font: normal 100%/normal Arial, Helvetica, sans-serif;
-        color: rgba(0,0,0,1);
-        -o-text-overflow: clip;
-        text-overflow: clip;
-        text-shadow: none;
-        -webkit-transform: rotateZ(-35deg);
-        transform: rotateZ(-35deg);
-    }
-
-    .star-5-points::after {
-        -webkit-box-sizing: content-box;
-        -moz-box-sizing: content-box;
-        box-sizing: content-box;
-        width: 0;
-        height: 0;
-        position: absolute;
-        content: "";
-        top: 3px;
-        left: -105px;
-        border: 100px solid rgba(0,0,0,0);
-        border-top: 0 solid;
-        border-bottom: 70px solid #FF8811;
-        font: normal 100%/normal Arial, Helvetica, sans-serif;
-        
-        -o-text-overflow: clip;
-        text-overflow: clip;
-        text-shadow: none;
-        -webkit-transform: rotateZ(-70deg);
-        transform: rotateZ(-70deg);
-
-    }
+ 
 
 #bubblesgrid {
     text-align: center;

@@ -1294,11 +1294,6 @@
     <Content Include="Content\kendo\2017.2.504\razor\Time.cshtml" />
     <Content Include="Content\kendo\2017.2.504\razor\Url.cshtml" />
     <None Include="Scripts\jquery-1.12.3.intellisense.js" />
-    <Content Include="Images\bubble1.PNG" />
-    <Content Include="Images\bubble2.PNG" />
-    <Content Include="Images\bubble3.PNG" />
-    <Content Include="Images\bubble4.PNG" />
-    <Content Include="Images\bubble5.PNG" />
     <Content Include="Images\star.PNG" />
     <Content Include="Scripts\app\common.js" />
     <Content Include="Scripts\app\ImagTestEditor.js" />
