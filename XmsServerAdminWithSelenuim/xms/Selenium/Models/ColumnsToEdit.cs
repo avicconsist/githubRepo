@@ -12,5 +12,6 @@ namespace Selenium.Models
 
         public string ColumnName { get; set; }
 
+        public bool Required { get; set; } 
     }
 }

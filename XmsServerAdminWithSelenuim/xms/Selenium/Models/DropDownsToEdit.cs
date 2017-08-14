@@ -10,6 +10,8 @@ namespace Selenium.Models
     {
         public int ColumnNum { get; set; }
 
+        public string ColumnName { get; set; }
+
         public bool ContainsEmptyValue { get; set; }
 
         public int NumOfDropDownOnGrid { get; set; }

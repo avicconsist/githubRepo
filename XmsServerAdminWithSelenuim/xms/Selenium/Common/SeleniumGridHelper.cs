@@ -23,6 +23,8 @@ namespace Selenium.Common
         public static int ActiveTab { get; set; }
         public static bool UpdateIdColumn { get; set; }
         public static IList<IWebElement> tableRows { get; set; }
+        public static IList<IWebElement> DropDownListValues { get; set; }
+        public static List<string> DropDownListTextValues { get; set; }
 
         #endregion
 
@@ -153,27 +155,63 @@ namespace Selenium.Common
             // CreateNewClick
             CreateNewClick();
 
-            //SendKeys 
+             
             if (ColumnsToEdit != null)
             {
+
+                // Check required fields
                 foreach (var col in ColumnsToEdit)
                 {
+                    UpdateBtnClick();
+
+                    Wait.Until(ExpectedConditions.ElementIsVisible(By.Name(col.ColumnName)));
+                    if (col.Required)
+                    {
+                        if (!SeleniumDriver.driver.FindElement(By.XPath("//*[@data-for='" + col.ColumnName + "']")).Text.Contains(col.ColumnName))
+                        {
+                            Assert.Fail("tooltip required field " + col.ColumnName + "is not visible");
+                        }
+                    } 
+
                     SendKeys(col.ColumnName);
                 }
             }
 
-            IList<IWebElement> containers = DropDownGetContainers();
 
-            var index = containers.Count;
+            //Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[2]/div/div[2]/ul")));
+
+
 
             //SelectValueDropDownList
             if (DropDownsToEdit != null)
             {
+
+                IList<IWebElement> containers = DropDownGetContainers();
+
+                var index = containers.Count;
+
                 foreach (var dropDown in DropDownsToEdit)
                 {
+
                     dropDown.NumOfDropDownOnGrid = index;
+
                     SelectValueDropDownList(dropDown);
+
                     index++;
+
+                    ////Check PeriodType DropDownList values
+                    //if (dropDown.ColumnName == "PeriodType")
+                    //{
+                    //    List<string> PeriodTypes = new List<string>() { "חצי שנתי", "מיידי", "חודשי", "רבעוני", "שבועי", "שנתי" };
+
+                    //    foreach (var value in DropDownListTextValues)
+                    //    {
+                    //        if (!PeriodTypes.Contains(value))
+                    //        {
+                    //            Assert.Fail("PeriodType values missing value : ", value);
+                    //        }
+                    //    }
+                    //} 
                 }
             }
 
@@ -204,13 +242,12 @@ namespace Selenium.Common
                 }
             }
 
-            IList<IWebElement> containers = DropDownGetContainers();
-
-            var index = containers.Count;
-
             //SelectValueDropDownList
             if (DropDownsToEdit != null)
             {
+                IList<IWebElement> containers = DropDownGetContainers();
+                var index = containers.Count;
+
                 foreach (var dropDown in DropDownsToEdit)
                 {
                     dropDown.NumOfDropDownOnGrid = index;
@@ -219,7 +256,7 @@ namespace Selenium.Common
                 }
             }
 
-            //UpdateBtnClick
+            //UpdateButton Click
             UpdateBtnClick();
 
             DialogWindowBtnClick();
@@ -228,7 +265,6 @@ namespace Selenium.Common
 
         public static void ColumensInRowToUpdate()
         {
-
             tableRows = GetGridRows();
 
             foreach (IWebElement row in tableRows)
@@ -476,13 +512,20 @@ namespace Selenium.Common
 
                 IList<IWebElement> containers = DropDownGetContainers();
 
-                IList<IWebElement> optionslist = containers[dropDown.NumOfDropDownOnGrid].FindElements(By.TagName("li"));
+
+                IWebElement list = containers[dropDown.NumOfDropDownOnGrid].FindElement(By.TagName("ul"));
+
+                Wait.Until(ExpectedConditions.ElementToBeClickable(list));
+
+                DropDownListValues = list.FindElements(By.TagName("li"));
+
+                SetDropDownListTextValuesFromDropDownListValues();
 
                 IWebElement option;
 
                 if (dropDown.ContainsEmptyValue)
                 {
-                    option = optionslist[dropDown.selectedValue];
+                    option = DropDownListValues[dropDown.selectedValue];
 
                     Wait.Until(ExpectedConditions.ElementToBeClickable(option));
 
@@ -490,7 +533,7 @@ namespace Selenium.Common
                 }
                 else
                 {
-                    option = optionslist[dropDown.selectedValue];
+                    option = DropDownListValues[dropDown.selectedValue];
 
                     Wait.Until(ExpectedConditions.ElementToBeClickable(option));
 
@@ -499,14 +542,27 @@ namespace Selenium.Common
                 break;
             }
             WaitHelper.WaitToFinishloading();
+
+        }
+
+
+        public static void SetDropDownListTextValuesFromDropDownListValues()
+        {
+            DropDownListTextValues = new List<string>();
+            foreach (IWebElement val in DropDownListValues)
+            {
+                DropDownListTextValues.Add(val.Text);
+            }
         }
 
         public static void DropDownTaxonomyClick()
         {
             SeleniumDriver.driver.FindElement(By.ClassName(DropDownTaxonomyName)).Click();
         }
+
         public static IList<IWebElement> DropDownGetContainers()
         {
+            Wait.Until(ExpectedConditions.ElementExists(By.ClassName("k-animation-container")));
             IList<IWebElement> containers = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
             return containers;
         }

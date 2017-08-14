@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using Selenium.Common;
 using Selenium.Models;
+using AutoIt;
 
 namespace Selenium
 {
@@ -16,12 +17,20 @@ namespace Selenium
     {
         public XbrlTest()
         {
-            if (SeleniumDriver.driver==null)
+            if (SeleniumDriver.driver == null)
             {
                 SeleniumDriver.driver = new ChromeDriver(@"C:\Users\tomerb\Documents\Visual Studio 2015\Projects\xms\Selenium");
                 SeleniumDriver.driver.Manage().Window.Maximize();
-                SeleniumDriver.driver.Navigate().GoToUrl("https://israel.consist.co.il:7540/XMSServerAdmin/Tabs/Index");
+                SeleniumDriver.driver.Navigate().GoToUrl("https://israel.consist.co.il:7540/XMSServer");//"https://israel.consist.co.il:7540/XMSServerAdmin/Tabs/Index"
                 SeleniumGridHelper.Wait = new WebDriverWait(SeleniumDriver.driver, TimeSpan.FromSeconds(10));
+                 
+                //AutoItX.WinWait("Authentication Required");
+                AutoItX.WinActivate("Authentication Required");
+                AutoItX.Send("dev2");
+                AutoItX.Send("{TAB}");
+                AutoItX.Send("dev2");
+                AutoItX.Send("{ENTER}"); 
+               
             }
         }
 
@@ -32,24 +41,24 @@ namespace Selenium
                 "localReportGrid",
                 "test",
                 "testUpdated",
-                "taxonomyForLocalReport",  
+                "taxonomyForLocalReport",
                 1,
                 true,
                 new List<ColumnsToEdit>()
                 {
-                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id"},
+                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id" ,Required= true},
                     new ColumnsToEdit() {ColumnNum = 3, ColumnName = "Description"}
-                }, 
+                },
                 new List<DropDownsToEdit>()
                 {
                     new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 2, selectedValue = 1 },
-                    new DropDownsToEdit() {ContainsEmptyValue = true, ColumnNum = 4, selectedValue = 1 },
+                    new DropDownsToEdit() {ContainsEmptyValue = true, ColumnNum = 4, selectedValue = 1 ,ColumnName= "PeriodType"},
                     new DropDownsToEdit() {ContainsEmptyValue = true, ColumnNum = 5, selectedValue = 1 }
                 });
 
 
             SeleniumGridHelper.ChangeTaxonomyDropDown();
-            SeleniumGridHelper.TestGrid(); 
+            SeleniumGridHelper.TestGrid();
         }
 
         [TestMethod]
@@ -64,16 +73,16 @@ namespace Selenium
                 false,
                 new List<ColumnsToEdit>()
                 {
-                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id"},
-                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description"},
-                    new ColumnsToEdit() {ColumnNum = 4, ColumnName = "EntryUri"},
-                    new ColumnsToEdit() {ColumnNum = 5, ColumnName = "FileName"},
-                    new ColumnsToEdit() {ColumnNum = 6, ColumnName = "EntitySchema"},
-                    new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntityIdentifire"},
+                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 4, ColumnName = "EntryUri",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 5, ColumnName = "FileName",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 6, ColumnName = "EntitySchema",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntityIdentifire",Required= true},
                 },
                 new List<DropDownsToEdit>()
                 {
-                    new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 3, selectedValue = 1 }, 
+                    new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 3, selectedValue = 1 },
                 });
 
 
@@ -93,18 +102,18 @@ namespace Selenium
                 true,
                 new List<ColumnsToEdit>()
                 {
-                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "TaxonomyId"},
-                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description"}, 
-                    new ColumnsToEdit() {ColumnNum = 4, ColumnName = "EntityIdentifier"},
-                    new ColumnsToEdit() {ColumnNum = 5, ColumnName = "Currency"},
-                    new ColumnsToEdit() {ColumnNum = 6, ColumnName = "Decimals"},
-                    new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntitySchema"}, 
-                    new ColumnsToEdit() {ColumnNum = 9, ColumnName = "TnProcessorId"},
+                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "TaxonomyId",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 4, ColumnName = "EntityIdentifier",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 5, ColumnName = "Currency",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 6, ColumnName = "Decimals",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntitySchema",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 9, ColumnName = "TnProcessorId",Required= true},
                 },
                 null);
 
-            SeleniumGridHelper.TestGrid(); 
-             
+            SeleniumGridHelper.TestGrid();
+
         }
 
         [TestMethod]
@@ -119,8 +128,8 @@ namespace Selenium
                 true,
                 new List<ColumnsToEdit>()
                 {
-                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id"},
-                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description"},  
+                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id",Required= true},
+                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description",Required= true},
                 },
                 null);
 
@@ -135,10 +144,12 @@ namespace Selenium
 
             if (!FileDownloadHelper.CheckFileDownloaded("XBRL"))
             {
-                Assert.Fail("File not Downloaded ");
+                Assert.Fail("File not Downloaded");
             }
 
             SeleniumDriver.driver.Quit();
-        }  
+            SeleniumDriver.driver.Dispose();
+
+        }
     }
 }

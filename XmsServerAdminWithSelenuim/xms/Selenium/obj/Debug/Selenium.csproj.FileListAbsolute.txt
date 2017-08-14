@@ -23,3 +23,7 @@ C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.dll
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.pdb
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.csprojResolveAssemblyReference.cache
+C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\AutoItX3.dll
+C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\AutoItX3_x64.dll
+C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\AutoItX3.Assembly.dll
+C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\AutoItX3.Assembly.xml
