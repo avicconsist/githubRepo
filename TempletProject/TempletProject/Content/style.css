@@ -98,14 +98,24 @@ a {
 
 .imageContainer {
     background-repeat: no-repeat;
-    height: auto;
-    
+    height: auto; 
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
    
  
 }
 
-.bubble1 {
-    display: inline-block;
+.imageContainer div{ 
+      display: block;
+    margin: auto; 
+}
+.imageContainer span{ 
+    display: block;
+    text-align: center;
+}
+
+.bubble1 { 
     background-color: #fff;
     background-color: rgba(255,255,255,0.5);
     box-shadow: inset 3px 3px 30px 6px #F2483E;
@@ -115,8 +125,7 @@ a {
     line-height: 55pt;
 }
 
-.bubble2 {
-    display: inline-block;
+.bubble2 { 
     background-color: #fff;
     background-color: rgba(255,255,255,0.5);
     box-shadow: inset 3px 3px 30px 6px #2AABD9;
@@ -126,8 +135,7 @@ a {
     line-height: 38pt;
 }
 
-.bubble3 {
-    display: inline-block;
+.bubble3 { 
     background-color: #fff;
     background-color: rgba(255,255,255,0.5);
     box-shadow: inset 3px 3px 30px 6px #FF4E46;
@@ -137,8 +145,7 @@ a {
     line-height: 38pt;
 }
 
-.bubble4 {
-    display: inline-block;
+.bubble4 { 
     background-color: #fff;
     background-color: rgba(255,255,255,0.5);
     box-shadow: inset 2px 2px 15px 3px #FF4E46;
@@ -148,8 +155,7 @@ a {
     line-height: 25pt;
 }
 
-.bubble5 {
-    display: inline-block;
+.bubble5 { 
     background-color: #fff;
     background-color: rgba(255,255,255,0.5);
     box-shadow: inset 2px 2px 15px 3px #2AABD9;
@@ -160,7 +166,7 @@ a {
 }
 .star {
     background-image: url(../Images/star.PNG);
-    display: inline-block;
+ 
     line-height: 25pt;
     height: 69px;
     width: 71px;

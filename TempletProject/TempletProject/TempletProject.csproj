@@ -1921,13 +1921,16 @@
     <Compile Include="Common\JsonHttpStatusResult.cs" />
     <Compile Include="Common\UserMessages.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ImgController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ColumnValidationResult.cs" />
+    <Compile Include="Models\TestModel.cs" />
+    <Compile Include="ViewModels\ImgGridModelViewModel.cs" />
     <Compile Include="ViewModels\UpdateTestViewModel.cs" />
-    <Compile Include="Models\TaxonomyModel.cs" />
+    <Compile Include="Models\ImgGridModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Common\BaseRepository.cs" />
     <Compile Include="Repositories\Common\ITestRepository.cs" />
