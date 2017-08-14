@@ -22,10 +22,19 @@ namespace Selenium.Common
         public static string NewRowId { get; set; }
         public static int ActiveTab { get; set; }
         public static bool UpdateIdColumn { get; set; }
+        public static IList<IWebElement> tableRows { get; set; }
 
         #endregion
 
         #region Helpers
+
+        public static void TestGrid()
+        {
+            CreateNewRow();
+            CreateNewRowWithExistId();
+            ColumensInRowToUpdate();
+            DeleteRow();
+        }
 
         public static void SetTestSetting(int activeTab, string gridId, string rowId, string newRowId, string dropDownTaxonomyName, int dropDownTaxonomyValue, bool updateIdColumn, List<ColumnsToEdit> columnsToEdit, List<DropDownsToEdit> dropDownsToEdit)
         {
@@ -43,9 +52,10 @@ namespace Selenium.Common
         public static void ChangeTaxonomyDropDown()
         {
             GoToActiveTab();
+
             Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(DropDownTaxonomyName)));
 
-            IList<IWebElement> tableRows = GetGridRows();
+            tableRows = GetGridRows();
             if (tableRows.Count == 0)
             {
                 Assert.Fail("To chack this test you must have table rows");
@@ -53,17 +63,15 @@ namespace Selenium.Common
 
             var firstRow = tableRows[0].Text;
 
-            UpdateBtnClick();
+            UpdateBtnClick(true);
 
-            SeleniumDriver.driver.FindElement(By.ClassName(DropDownTaxonomyName)).Click();
+            DropDownTaxonomyClick();
 
             var activeTaxonomy = GetActiveTaxonomy();
 
-            IList<IWebElement> containers = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
+            IList<IWebElement> containers = DropDownGetContainers();
 
             IList<IWebElement> optionslist = containers[containers.Count - 1].FindElements(By.TagName("li"));
-
-
 
             if (optionslist.Count > 1)
             {
@@ -83,15 +91,16 @@ namespace Selenium.Common
                     Assert.Fail("Fail to chancge taxonomy when canceled confirm dialog");
                 }
 
-                SeleniumDriver.driver.FindElement(By.ClassName(DropDownTaxonomyName)).Click();
+                DropDownTaxonomyClick();
+
                 Wait.Until(ExpectedConditions.ElementToBeClickable(option));
                 option.Click();
 
                 ConfrimButtonClick(true);
 
-                IList<IWebElement> tableRowsUpdates = GetGridRows();
+                tableRows = GetGridRows();
 
-                if (tableRowsUpdates[0].Text.Equals(firstRow))
+                if (tableRows[0].Text.Equals(firstRow))
                 {
                     Assert.Fail("To chack this test you must have table rows");
                 }
@@ -112,10 +121,10 @@ namespace Selenium.Common
         {
             WaitHelper.WaitToFinishloading();
 
-            IList<IWebElement> tableRow = GetGridRows();
+            tableRows = GetGridRows();
 
 
-            foreach (IWebElement row in tableRow)
+            foreach (IWebElement row in tableRows)
             {
                 RowTD = row.FindElements(By.TagName("td"));
 
@@ -153,9 +162,9 @@ namespace Selenium.Common
                 }
             }
 
-            IList<IWebElement> optionslist = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
+            IList<IWebElement> containers = DropDownGetContainers();
 
-            var index = optionslist.Count;
+            var index = containers.Count;
 
             //SelectValueDropDownList
             if (DropDownsToEdit != null)
@@ -180,7 +189,7 @@ namespace Selenium.Common
 
         }
 
-        public static void CreateNewRowWithExistsId()
+        public static void CreateNewRowWithExistId()
         {
             GoToActiveTab();
             // CreateNewClick
@@ -195,10 +204,9 @@ namespace Selenium.Common
                 }
             }
 
+            IList<IWebElement> containers = DropDownGetContainers();
 
-            IList<IWebElement> optionslist = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
-
-            var index = optionslist.Count;
+            var index = containers.Count;
 
             //SelectValueDropDownList
             if (DropDownsToEdit != null)
@@ -218,20 +226,19 @@ namespace Selenium.Common
             CancelBtnClick();
         }
 
-        public static void UpdateColumensInRow()
+        public static void ColumensInRowToUpdate()
         {
 
-            IList<IWebElement> tableRow = GetGridRows();
+            tableRows = GetGridRows();
 
-            
-            foreach (IWebElement row in tableRow)
+            foreach (IWebElement row in tableRows)
             {
                 RowTD = row.FindElements(By.TagName("td"));
 
                 var rowTdText = RowTD[1].Text;
 
-                if (ColumnsToEdit!=null)
-                {  
+                if (ColumnsToEdit != null)
+                {
                     if (!UpdateIdColumn)
                     {
                         rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text;
@@ -252,7 +259,6 @@ namespace Selenium.Common
                                     continue;
                                 }
                             }
-                          
 
                             RowTD[col.ColumnNum].Click();
                             var id = RowTD[col.ColumnNum].FindElement(By.TagName("input"));
@@ -265,7 +271,7 @@ namespace Selenium.Common
                         break;
                     }
                 }
-               
+
             }
             RefreshPage();
 
@@ -285,8 +291,8 @@ namespace Selenium.Common
         {
             WaitHelper.WaitUntilTableIsVisible(GridId);
             IWebElement tableElement = SeleniumDriver.driver.FindElement(By.XPath("//*[@id='" + GridId + "']/div[3]/table"));
-            IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
-            return tableRow;
+            tableRows = tableElement.FindElements(By.TagName("tr"));
+            return tableRows;
         }
 
         public static void RefreshPage()
@@ -296,9 +302,10 @@ namespace Selenium.Common
             GoToActiveTab();
 
             WaitHelper.WaitUntilTableIsVisible(GridId);
+
             if (!string.IsNullOrWhiteSpace(DropDownTaxonomyName))
             {
-                SeleniumDriver.driver.FindElement(By.ClassName(DropDownTaxonomyName)).Click();
+                DropDownTaxonomyClick();
 
                 Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[2]/div/div[2]/ul")));
 
@@ -336,9 +343,16 @@ namespace Selenium.Common
             ClickOnButton(0, false);
         }
 
-        public static void UpdateBtnClick()
+        public static void UpdateBtnClick(bool clickOnFirstRow = false)
         {
-            ClickOnButton(0, false);
+            if (clickOnFirstRow)
+            {
+                ClickOnButton(0, false, false, true);
+            }
+            else
+            {
+                ClickOnButton(0, false);
+            }
         }
 
         public static void DeleteBtnClick()
@@ -365,24 +379,31 @@ namespace Selenium.Common
             ClickOnButton(1, false);
         }
 
-        public static void ClickOnButton(int buttonNum, bool isDeleteButton = false, bool btnConfrim = false)
+        public static void ClickOnButton(int buttonNum, bool isDeleteButton = false, bool btnConfrim = false, bool firstRow = false)
         {
             WaitHelper.WaitToFinishloading();
 
-            IList<IWebElement> tableRow = GetGridRows();
+            tableRows = GetGridRows();
 
-            foreach (IWebElement row in tableRow)
+            foreach (IWebElement row in tableRows)
             {
 
                 RowTD = row.FindElements(By.TagName("td"));
                 IList<IWebElement> buttons = RowTD[0].FindElements(By.TagName("a"));
+
+                var rowTdText = RowTD[1].Text;
+
+                if (firstRow)
+                {
+                    buttons[buttonNum].Click();
+                    break;
+                }
+
                 if (isDeleteButton)
                 {
-                    var rowTdText = RowTD[1].Text;
-
                     if (!UpdateIdColumn)
                     {
-                        rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text;
+                        rowTdText = RowTD[2].Text;
                     }
                     if (rowTdText.Equals(RowId))
                     {
@@ -393,8 +414,16 @@ namespace Selenium.Common
                 }
                 else
                 {
-                    buttons[buttonNum].Click();
-                    break;
+                    if (!UpdateIdColumn)
+                    {
+                        buttons[buttonNum].Click();
+                        break;
+                    }
+                    if (rowTdText.Equals(RowId) || rowTdText == string.Empty)
+                    {
+                        buttons[buttonNum].Click();
+                        break;
+                    }
                 }
             }
             WaitHelper.WaitToFinishloading();
@@ -402,7 +431,6 @@ namespace Selenium.Common
 
         public static void ConfrimButtonClick(bool btnConfrim)
         {
-
             WaitHelper.WaitToConfrimWindow();
 
             var dialog = SeleniumDriver.driver.FindElement(By.ClassName("k-confirm"));
@@ -437,16 +465,16 @@ namespace Selenium.Common
 
         public static void SelectValueDropDownList(DropDownsToEdit dropDown)
         {
-            IList<IWebElement> tableRow = GetGridRows();
+            tableRows = GetGridRows();
 
-            foreach (IWebElement row in tableRow)
+            foreach (IWebElement row in tableRows)
             {
                 RowTD = row.FindElements(By.TagName("td"));
                 Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("k-select")));
                 IWebElement select = RowTD[dropDown.ColumnNum].FindElement(By.ClassName("k-select"));
                 select.Click();
 
-                IList<IWebElement> containers = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
+                IList<IWebElement> containers = DropDownGetContainers();
 
                 IList<IWebElement> optionslist = containers[dropDown.NumOfDropDownOnGrid].FindElements(By.TagName("li"));
 
@@ -472,6 +500,17 @@ namespace Selenium.Common
             }
             WaitHelper.WaitToFinishloading();
         }
+
+        public static void DropDownTaxonomyClick()
+        {
+            SeleniumDriver.driver.FindElement(By.ClassName(DropDownTaxonomyName)).Click();
+        }
+        public static IList<IWebElement> DropDownGetContainers()
+        {
+            IList<IWebElement> containers = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
+            return containers;
+        }
+
 
         #endregion 
     }

@@ -19,13 +19,7 @@ C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\Selenium.pdb
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\ThoughtWorks.Selenium.Core.dll
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\Selenium.WebDriverBackedSelenium.pdb
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\Selenium.WebDriverBackedSelenium.xml
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\ThoughtWorks.Selenium.Core.xml
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\WebDriver.pdb
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\WebDriver.xml
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\WebDriver.Support.pdb
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\bin\Debug\WebDriver.Support.xml
-C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.csprojResolveAssemblyReference.cache
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.dll
 C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.pdb
+C:\Users\tomerb\Source\Repos\githubRepo\XmsServerAdminWithSelenuim\xms\Selenium\obj\Debug\Selenium.csprojResolveAssemblyReference.cache

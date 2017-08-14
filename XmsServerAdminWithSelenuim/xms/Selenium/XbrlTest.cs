@@ -26,7 +26,7 @@ namespace Selenium
         }
 
         [TestMethod]
-        public void LocalTaxonomyReports()
+        public void Test1_LocalTaxonomyReports()
         {
             SeleniumGridHelper.SetTestSetting(4,
                 "localReportGrid",
@@ -47,15 +47,13 @@ namespace Selenium
                     new DropDownsToEdit() {ContainsEmptyValue = true, ColumnNum = 5, selectedValue = 1 }
                 });
 
-            SeleniumGridHelper.ChangeTaxonomyDropDown(); 
-            SeleniumGridHelper.CreateNewRow();
-            SeleniumGridHelper.CreateNewRowWithExistsId();
-            SeleniumGridHelper.UpdateColumensInRow();
-            SeleniumGridHelper.DeleteRow();
+
+            SeleniumGridHelper.ChangeTaxonomyDropDown();
+            SeleniumGridHelper.TestGrid(); 
         }
 
         [TestMethod]
-        public void TaxonomyReports()
+        public void Test2_TaxonomyReports()
         {
             SeleniumGridHelper.SetTestSetting(3,
                 "taxonomyReportGrid",
@@ -80,15 +78,11 @@ namespace Selenium
 
 
             SeleniumGridHelper.ChangeTaxonomyDropDown();
-            SeleniumGridHelper.CreateNewRow();
-            SeleniumGridHelper.CreateNewRowWithExistsId();
-            SeleniumGridHelper.UpdateColumensInRow();
-            SeleniumGridHelper.DeleteRow();
-             
+            SeleniumGridHelper.TestGrid();
         }
 
         [TestMethod]
-        public void TaxonomyEntity()
+        public void Test3_TaxonomyEntity()
         {
             SeleniumGridHelper.SetTestSetting(1,
                 "taxonomyGrid",
@@ -107,16 +101,44 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntitySchema"}, 
                     new ColumnsToEdit() {ColumnNum = 9, ColumnName = "TnProcessorId"},
                 },
-                null); 
+                null);
 
-            SeleniumGridHelper.CreateNewRow();
-            SeleniumGridHelper.CreateNewRowWithExistsId();
-            SeleniumGridHelper.UpdateColumensInRow();
-            SeleniumGridHelper.DeleteRow();
+            SeleniumGridHelper.TestGrid(); 
+             
+        }
 
+        [TestMethod]
+        public void Test4_localEntityGrid()
+        {
+            SeleniumGridHelper.SetTestSetting(2,
+                "localEntityGrid",
+                "test",
+                "testUpdated",
+                 "",
+                0,
+                true,
+                new List<ColumnsToEdit>()
+                {
+                    new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id"},
+                    new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description"},  
+                },
+                null);
 
+            SeleniumGridHelper.TestGrid();
 
             SeleniumDriver.driver.Quit();
         }
+
+        [TestMethod]
+        public void CheckFileDownloaded()
+        {
+
+            if (!FileDownloadHelper.CheckFileDownloaded("XBRL"))
+            {
+                Assert.Fail("File not Downloaded ");
+            }
+
+            SeleniumDriver.driver.Quit();
+        }  
     }
 }

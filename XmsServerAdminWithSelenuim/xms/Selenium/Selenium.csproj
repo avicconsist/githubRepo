@@ -66,6 +66,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Common\FileDownloadHelper.cs" />
     <Compile Include="Common\WaitHelper.cs" />
     <Compile Include="Common\SeleniumDriver.cs" />
     <Compile Include="Common\SeleniumGridHelper.cs" />
