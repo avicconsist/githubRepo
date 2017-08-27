@@ -71,9 +71,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Common\FileDownloadHelper.cs" />
+    <Compile Include="Common\AdminPageHelper.cs" />
     <Compile Include="Common\WaitHelper.cs" />
-    <Compile Include="Common\SeleniumDriver.cs" />
-    <Compile Include="Common\SeleniumGridHelper.cs" />
+    <Compile Include="SeleniumDriver.cs" />
+    <Compile Include="Common\GridHelper.cs" />
     <Compile Include="Models\ColumnsToEdit.cs" />
     <Compile Include="Models\DropDownsToEdit.cs" />
     <Compile Include="XbrlTest.cs" />

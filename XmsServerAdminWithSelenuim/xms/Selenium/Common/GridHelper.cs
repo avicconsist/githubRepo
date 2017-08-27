@@ -4,22 +4,26 @@ using System.Collections.Generic;
 using Selenium.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
+using System.Linq;
+using System;
 
 namespace Selenium.Common
 {
-    public static class SeleniumGridHelper
+    public static class GridHelper
     {
         #region properties
 
         public static List<ColumnsToEdit> ColumnsToEdit { get; set; }
         public static List<DropDownsToEdit> DropDownsToEdit { get; set; }
+        public static List<string> ForceToEdit { get; set; }
         public static int DropDownTaxonomyValue { get; set; }
         public static string DropDownTaxonomyName { get; set; }
         public static IList<IWebElement> RowTD { get; set; }
-        public static WebDriverWait Wait { get; set; }
         public static string GridId { get; set; }
         public static string RowId { get; set; }
         public static string NewRowId { get; set; }
+        public static string ActiveRow { get; set; }
+        public static string TabId { get; set; }
         public static int ActiveTab { get; set; }
         public static bool UpdateIdColumn { get; set; }
         public static IList<IWebElement> tableRows { get; set; }
@@ -34,11 +38,11 @@ namespace Selenium.Common
         {
             CreateNewRow();
             CreateNewRowWithExistId();
-            ColumensInRowToUpdate();
+            UpdateRow();
             DeleteRow();
         }
 
-        public static void SetTestSetting(int activeTab, string gridId, string rowId, string newRowId, string dropDownTaxonomyName, int dropDownTaxonomyValue, bool updateIdColumn, List<ColumnsToEdit> columnsToEdit, List<DropDownsToEdit> dropDownsToEdit)
+        public static void SetTestSetting(int activeTab, string gridId, string rowId, string newRowId, string dropDownTaxonomyName, int dropDownTaxonomyValue, bool updateIdColumn, List<ColumnsToEdit> columnsToEdit, List<string> forceToEdit, List<DropDownsToEdit> dropDownsToEdit)
         {
             ActiveTab = activeTab;
             GridId = gridId;
@@ -46,6 +50,7 @@ namespace Selenium.Common
             NewRowId = newRowId;
             DropDownTaxonomyValue = dropDownTaxonomyValue;
             ColumnsToEdit = columnsToEdit;
+            ForceToEdit = forceToEdit;
             DropDownsToEdit = dropDownsToEdit;
             DropDownTaxonomyName = dropDownTaxonomyName;
             UpdateIdColumn = updateIdColumn;
@@ -55,7 +60,7 @@ namespace Selenium.Common
         {
             GoToActiveTab();
 
-            Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(DropDownTaxonomyName)));
+            WaitHelper.Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(DropDownTaxonomyName)));
 
             tableRows = GetGridRows();
             if (tableRows.Count == 0)
@@ -80,7 +85,7 @@ namespace Selenium.Common
 
                 IWebElement option = optionslist[DropDownTaxonomyValue];
 
-                Wait.Until(ExpectedConditions.ElementToBeClickable(option));
+                WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(option));
 
                 option.Click();
 
@@ -95,7 +100,7 @@ namespace Selenium.Common
 
                 DropDownTaxonomyClick();
 
-                Wait.Until(ExpectedConditions.ElementToBeClickable(option));
+                WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(option));
                 option.Click();
 
                 ConfrimButtonClick(true);
@@ -115,16 +120,45 @@ namespace Selenium.Common
 
         public static void GoToActiveTab()
         {
-            Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='tabstrip']/ul/li[" + ActiveTab + "]")));
-            SeleniumDriver.driver.FindElement(By.XPath("//*[@id='tabstrip']/ul/li[" + ActiveTab + "]")).Click();
+            WaitHelper.Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='" + TabId + "']/ul/li[" + ActiveTab + "]")));
+
+            var tab = SeleniumDriver.driver.FindElement(By.XPath("//*[@id='" + TabId + "']/ul/li[" + ActiveTab + "]"));
+
+            WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(tab));
+
+            tab.Click();
+
         }
 
-        public static bool IsRowExists()
+        public static bool IsRowExists(bool containBtnLastPage= true )
+        {
+            var rowExists = FindRow();
+
+            if (rowExists == null)
+            {
+                if (containBtnLastPage)
+                {
+                    var goToLastPage = SeleniumDriver.driver.FindElement(By.ClassName("k-pager-last"));
+
+                    goToLastPage.Click();
+
+                    rowExists = FindRow();
+                }
+
+                if (rowExists == null)
+                {
+                    return false;
+                } 
+            }
+
+            return true;
+        }
+
+        public static IWebElement FindRow()
         {
             WaitHelper.WaitToFinishloading();
 
             tableRows = GetGridRows();
-
 
             foreach (IWebElement row in tableRows)
             {
@@ -142,45 +176,41 @@ namespace Selenium.Common
                 }
                 if (rowTdText.Equals(RowId))
                 {
-                    return true;
+                    return row;
                 }
             }
-
-            return false;
+            return null;
         }
 
         public static void CreateNewRow()
         {
             GoToActiveTab();
-            // CreateNewClick
+
+            // CreateNew Click
             CreateNewClick();
 
-             
             if (ColumnsToEdit != null)
             {
-
                 // Check required fields
                 foreach (var col in ColumnsToEdit)
                 {
-                    UpdateBtnClick();
-
-                    Wait.Until(ExpectedConditions.ElementIsVisible(By.Name(col.ColumnName)));
                     if (col.Required)
                     {
-                        if (!SeleniumDriver.driver.FindElement(By.XPath("//*[@data-for='" + col.ColumnName + "']")).Text.Contains(col.ColumnName))
+                        UpdateBtnClick(true);
+
+                        WaitHelper.Wait.Until(ExpectedConditions.ElementIsVisible(By.Name(col.ColumnName)));
+                        if (SeleniumDriver.driver.FindElement(By.XPath("//*[@data-for='" + col.ColumnName + "']")).Text.Contains("שדה חובה") ||
+                             SeleniumDriver.driver.FindElement(By.XPath("//*[@data-for='" + col.ColumnName + "']")).Text.Contains("נדרש"))
+                        {
+                            SendKeys(col.ColumnName);
+                        }
+                        else
                         {
                             Assert.Fail("tooltip required field " + col.ColumnName + "is not visible");
                         }
-                    } 
-
-                    SendKeys(col.ColumnName);
+                    }
                 }
             }
-
-
-            //Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[2]/div/div[2]/ul")));
-
-
 
             //SelectValueDropDownList
             if (DropDownsToEdit != null)
@@ -192,31 +222,16 @@ namespace Selenium.Common
 
                 foreach (var dropDown in DropDownsToEdit)
                 {
-
                     dropDown.NumOfDropDownOnGrid = index;
 
                     SelectValueDropDownList(dropDown);
 
                     index++;
-
-                    ////Check PeriodType DropDownList values
-                    //if (dropDown.ColumnName == "PeriodType")
-                    //{
-                    //    List<string> PeriodTypes = new List<string>() { "חצי שנתי", "מיידי", "חודשי", "רבעוני", "שבועי", "שנתי" };
-
-                    //    foreach (var value in DropDownListTextValues)
-                    //    {
-                    //        if (!PeriodTypes.Contains(value))
-                    //        {
-                    //            Assert.Fail("PeriodType values missing value : ", value);
-                    //        }
-                    //    }
-                    //} 
                 }
             }
 
             //UpdateBtnClick
-            UpdateBtnClick();
+            UpdateBtnClick(true);
 
             RefreshPage();
             //Is the new row exists in table
@@ -224,7 +239,6 @@ namespace Selenium.Common
             {
                 Assert.Fail("AddRow Fail");
             }
-
         }
 
         public static void CreateNewRowWithExistId()
@@ -257,13 +271,14 @@ namespace Selenium.Common
             }
 
             //UpdateButton Click
-            UpdateBtnClick();
+            UpdateBtnClick(true);
 
             DialogWindowBtnClick();
+
             CancelBtnClick();
         }
 
-        public static void ColumensInRowToUpdate()
+        public static void UpdateRow()
         {
             tableRows = GetGridRows();
 
@@ -271,7 +286,12 @@ namespace Selenium.Common
             {
                 RowTD = row.FindElements(By.TagName("td"));
 
-                var rowTdText = RowTD[1].Text;
+                var rowTdText = RowTD[ColumnsToEdit[0].ColumnNum].Text;
+
+                if (rowTdText.Contains("מחק"))
+                {
+                    rowTdText = RowTD[RowTD.Count - 1].Text;
+                }
 
                 if (ColumnsToEdit != null)
                 {
@@ -290,6 +310,14 @@ namespace Selenium.Common
                         {
                             if (col.ColumnName.Contains("Id"))
                             {
+                                if (ForceToEdit != null && ForceToEdit.Contains(col.ColumnName))
+                                {
+                                    RowTD[col.ColumnNum].Click();
+                                    var cellid = RowTD[col.ColumnNum].FindElement(By.TagName("input"));
+                                    cellid.Clear();
+                                    SendKeys(col.ColumnName);
+                                    continue;
+                                }
                                 if (!UpdateIdColumn)
                                 {
                                     continue;
@@ -307,7 +335,6 @@ namespace Selenium.Common
                         break;
                     }
                 }
-
             }
             RefreshPage();
 
@@ -320,20 +347,26 @@ namespace Selenium.Common
 
         public static void DeleteRow()
         {
-            DeleteBtnClick();
+            DeleteBtnClick(); 
         }
 
         public static IList<IWebElement> GetGridRows()
         {
             WaitHelper.WaitUntilTableIsVisible(GridId);
-            IWebElement tableElement = SeleniumDriver.driver.FindElement(By.XPath("//*[@id='" + GridId + "']/div[3]/table"));
-            tableRows = tableElement.FindElements(By.TagName("tr"));
+
+            var grid = SeleniumDriver.driver.FindElement(By.Id(GridId));
+            var table = grid.FindElement(By.TagName("tbody"));
+            tableRows = table.FindElements(By.TagName("tr"));
             return tableRows;
         }
 
         public static void RefreshPage()
         {
             SeleniumDriver.driver.Navigate().Refresh();
+
+
+            AdminPageHelper.AdminButtonClick();
+            AdminPageHelper.SwitchToIframe();
 
             GoToActiveTab();
 
@@ -343,15 +376,15 @@ namespace Selenium.Common
             {
                 DropDownTaxonomyClick();
 
-                Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("/html/body/div[2]/div/div[2]/ul")));
+                IList<IWebElement> containers = DropDownGetContainers();
 
-                var taxonomylist = SeleniumDriver.driver.FindElement(By.XPath("/html/body/div[2]/div/div[2]/ul"));
+                IList<IWebElement> optionslist = containers[containers.Count - 1].FindElements(By.TagName("li"));
 
-                var activeTaxonomy = GetActiveTaxonomy();
+                IWebElement option = optionslist[DropDownTaxonomyValue];
 
-                IList<IWebElement> values = taxonomylist.FindElements(By.TagName("li"));
+                WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(option));
 
-                values[DropDownTaxonomyValue].Click();
+                option.Click();
 
                 WaitHelper.WaitToFinishloading();
             }
@@ -359,7 +392,7 @@ namespace Selenium.Common
 
         public static IWebElement GetActiveTaxonomy()
         {
-            return SeleniumDriver.driver.FindElement(By.XPath("//*[@id='tabstrip-" + ActiveTab + "']/span/span/span[1]"));
+            return SeleniumDriver.driver.FindElement(By.XPath("//*[@id='" + TabId + "-" + ActiveTab + "']/span/span/span[1]"));
         }
 
         #endregion
@@ -369,31 +402,33 @@ namespace Selenium.Common
         public static void CreateNewClick()
         {
             WaitHelper.WaitUntilTableIsVisible(GridId);
-            Wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@id='" + GridId + "']/div[1]/a")));
+            WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@id='" + GridId + "']/div[1]/a")));
             SeleniumDriver.driver.FindElement(By.XPath("//*[@id='" + GridId + "']/div[1]/a")).Click();
             WaitHelper.WaitToFinishloading();
         }
 
         public static void EditBtnClick()
         {
-            ClickOnButton(0, false);
+            BtnClick("Edit");
         }
 
         public static void UpdateBtnClick(bool clickOnFirstRow = false)
         {
             if (clickOnFirstRow)
             {
-                ClickOnButton(0, false, false, true);
+                BtnClick("UpdateNewRow");
             }
             else
             {
-                ClickOnButton(0, false);
+                BtnClick("Update");
             }
         }
 
         public static void DeleteBtnClick()
         {
-            ClickOnButton(1, true);
+            BtnClick("Delete");
+            ConfrimButtonClick(false);
+            RowId = NewRowId;
             //Is the new row exists in table
             if (!IsRowExists())
             {
@@ -402,7 +437,9 @@ namespace Selenium.Common
 
             RefreshPage();
 
-            ClickOnButton(1, true, true);
+            BtnClick("Delete");
+            ConfrimButtonClick(true);
+            RefreshPage();
 
             if (IsRowExists())
             {
@@ -412,74 +449,25 @@ namespace Selenium.Common
 
         public static void CancelBtnClick()
         {
-            ClickOnButton(1, false);
-        }
-
-        public static void ClickOnButton(int buttonNum, bool isDeleteButton = false, bool btnConfrim = false, bool firstRow = false)
-        {
-            WaitHelper.WaitToFinishloading();
-
-            tableRows = GetGridRows();
-
-            foreach (IWebElement row in tableRows)
-            {
-
-                RowTD = row.FindElements(By.TagName("td"));
-                IList<IWebElement> buttons = RowTD[0].FindElements(By.TagName("a"));
-
-                var rowTdText = RowTD[1].Text;
-
-                if (firstRow)
-                {
-                    buttons[buttonNum].Click();
-                    break;
-                }
-
-                if (isDeleteButton)
-                {
-                    if (!UpdateIdColumn)
-                    {
-                        rowTdText = RowTD[2].Text;
-                    }
-                    if (rowTdText.Equals(RowId))
-                    {
-                        buttons[buttonNum].Click();
-                        ConfrimButtonClick(btnConfrim);
-                        break;
-                    }
-                }
-                else
-                {
-                    if (!UpdateIdColumn)
-                    {
-                        buttons[buttonNum].Click();
-                        break;
-                    }
-                    if (rowTdText.Equals(RowId) || rowTdText == string.Empty)
-                    {
-                        buttons[buttonNum].Click();
-                        break;
-                    }
-                }
-            }
-            WaitHelper.WaitToFinishloading();
+            BtnClick("Cancel");
         }
 
         public static void ConfrimButtonClick(bool btnConfrim)
         {
-            WaitHelper.WaitToConfrimWindow();
+            WaitHelper.Wait.Timeout = TimeSpan.FromSeconds(3);
+            var dialog = WaitHelper.WaitToConfrimWindow();
+            WaitHelper.Wait.Timeout = TimeSpan.FromSeconds(10);
 
-            var dialog = SeleniumDriver.driver.FindElement(By.ClassName("k-confirm"));
-
-            IList<IWebElement> confrimButtons = dialog.FindElements(By.TagName("button"));
+            var btnOk = dialog.FindElement(By.XPath("//button[contains(text(),'אישור')]"));
+            var btnCancel = dialog.FindElement(By.XPath("//button[contains(text(),'ביטול')]"));
 
             if (btnConfrim)
             {
-                confrimButtons[0].Click();
+                btnOk.Click();
             }
             else
             {
-                confrimButtons[1].Click();
+                btnCancel.Click();
             }
             WaitHelper.WaitToFinishloading();
         }
@@ -488,14 +476,14 @@ namespace Selenium.Common
         {
             WaitHelper.WaitToDialogWindow();
 
-            SeleniumDriver.driver.FindElement(By.XPath("//button[@type='button' and text()= 'אישור']")).Click();
+            SeleniumDriver.driver.FindElement(By.XPath("//button")).Click();
 
             WaitHelper.WaitToFinishloading();
         }
 
         public static void SendKeys(string columnNameToEdit)
         {
-            Wait.Until(ExpectedConditions.ElementIsVisible(By.Name(columnNameToEdit)));
+            WaitHelper.Wait.Until(ExpectedConditions.ElementIsVisible(By.Name(columnNameToEdit)));
             SeleniumDriver.driver.FindElement(By.Name(columnNameToEdit)).SendKeys(RowId);
         }
 
@@ -506,7 +494,7 @@ namespace Selenium.Common
             foreach (IWebElement row in tableRows)
             {
                 RowTD = row.FindElements(By.TagName("td"));
-                Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("k-select")));
+                WaitHelper.Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("k-select")));
                 IWebElement select = RowTD[dropDown.ColumnNum].FindElement(By.ClassName("k-select"));
                 select.Click();
 
@@ -515,7 +503,7 @@ namespace Selenium.Common
 
                 IWebElement list = containers[dropDown.NumOfDropDownOnGrid].FindElement(By.TagName("ul"));
 
-                Wait.Until(ExpectedConditions.ElementToBeClickable(list));
+                WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(list));
 
                 DropDownListValues = list.FindElements(By.TagName("li"));
 
@@ -527,7 +515,7 @@ namespace Selenium.Common
                 {
                     option = DropDownListValues[dropDown.selectedValue];
 
-                    Wait.Until(ExpectedConditions.ElementToBeClickable(option));
+                    WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(option));
 
                     option.Click();
                 }
@@ -535,7 +523,7 @@ namespace Selenium.Common
                 {
                     option = DropDownListValues[dropDown.selectedValue];
 
-                    Wait.Until(ExpectedConditions.ElementToBeClickable(option));
+                    WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(option));
 
                     option.Click();
                 }
@@ -544,7 +532,6 @@ namespace Selenium.Common
             WaitHelper.WaitToFinishloading();
 
         }
-
 
         public static void SetDropDownListTextValuesFromDropDownListValues()
         {
@@ -562,12 +549,112 @@ namespace Selenium.Common
 
         public static IList<IWebElement> DropDownGetContainers()
         {
-            Wait.Until(ExpectedConditions.ElementExists(By.ClassName("k-animation-container")));
+            //WaitHelper.Wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("k-animation-container")));
             IList<IWebElement> containers = SeleniumDriver.driver.FindElements(By.ClassName("k-animation-container"));
             return containers;
         }
 
+        public static IList<IWebElement> GetRowButtons(string rowId, bool getFirstRowButtns = false)
+        {
+            WaitHelper.WaitToFinishloading();
 
-        #endregion 
+            tableRows = GetGridRows();
+
+            foreach (IWebElement row in tableRows)
+            {
+                RowTD = row.FindElements(By.TagName("td"));
+                var rowTdText = string.Empty;
+
+                if (rowTdText.Contains("מחק"))
+                {
+                    rowTdText = RowTD[RowTD.Count - 1].Text;
+                }
+
+                if (ColumnsToEdit.Count > 1)
+                {
+                    rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text;
+                }
+
+                IList<IWebElement> buttons = row.FindElements(By.TagName("a"));
+                if (UpdateIdColumn)
+                {
+                    rowTdText = RowTD[ColumnsToEdit[0].ColumnNum].Text;
+                }
+
+                if (getFirstRowButtns)
+                {
+                    return buttons;
+                }
+                if (rowTdText.Equals("יש להכניס מזהה ייחודי") ||
+                   rowTdText.Equals("שדה חובה"))
+                {
+                    return buttons;
+                }
+                if (rowTdText.Equals(rowId) ||
+                    rowTdText.Equals(string.Empty))
+                {
+                    return buttons;
+                }
+            }
+            return null;
+        }
+
+        public static void BtnClick(string type)
+        {
+            var buttons = GetRowButtons(RowId);
+            WaitHelper.WaitToFinishloading();
+            if (type == "UpdateNewRow")
+            {
+                buttons = GetRowButtons(RowId, true);
+            }
+
+            if (buttons != null)
+            {
+                switch (type)
+                {
+                    case "Edit":
+                        WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(buttons[0]));
+                        buttons[0].Click();
+                        break;
+
+                    case "Update":
+                        WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(buttons[0]));
+                        buttons[0].Click();
+                        break;
+
+                    case "UpdateNewRow":
+                        WaitHelper.Wait.Until(ExpectedConditions.ElementToBeClickable(buttons[0]));
+                        buttons[0].Click();
+                        break;
+
+                    case "Cancel":
+                        var td = RowTD.Where(x => x.Text.Contains("בטל עריכה")).FirstOrDefault();
+
+                        if (td != null)
+                        {
+                            Thread.Sleep(100);
+                            td.Click();
+                        }
+                        break;
+
+                    case "Delete":
+                        td = RowTD.Where(x => x.Text.Contains("מחק")).FirstOrDefault();
+
+                        if (td != null)
+                        {
+                            Thread.Sleep(100);
+                            td.Click();
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            WaitHelper.WaitToFinishloading();
+        }
+
+        #endregion
     }
 }

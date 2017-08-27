@@ -15,6 +15,13 @@ namespace Selenium
     [TestClass]
     public class XbrlTest
     {
+
+        //need to chack 
+        // tabs elmentId ???  (tabstrip || AdminTabs)
+
+
+
+
         public XbrlTest()
         {
             if (SeleniumDriver.driver == null)
@@ -22,22 +29,26 @@ namespace Selenium
                 SeleniumDriver.driver = new ChromeDriver(@"C:\Users\tomerb\Documents\Visual Studio 2015\Projects\xms\Selenium");
                 SeleniumDriver.driver.Manage().Window.Maximize();
                 SeleniumDriver.driver.Navigate().GoToUrl("https://israel.consist.co.il:7540/XMSServer");//"https://israel.consist.co.il:7540/XMSServerAdmin/Tabs/Index"
-                SeleniumGridHelper.Wait = new WebDriverWait(SeleniumDriver.driver, TimeSpan.FromSeconds(10));
-                 
+                WaitHelper.Wait = new WebDriverWait(SeleniumDriver.driver, TimeSpan.FromSeconds(10));
+
                 //AutoItX.WinWait("Authentication Required");
+
                 AutoItX.WinActivate("Authentication Required");
                 AutoItX.Send("dev2");
                 AutoItX.Send("{TAB}");
                 AutoItX.Send("dev2");
-                AutoItX.Send("{ENTER}"); 
-               
+                AutoItX.Send("{ENTER}");
+
+                GridHelper.TabId = "tabstrip";
+
             }
         }
 
         [TestMethod]
         public void Test1_LocalTaxonomyReports()
         {
-            SeleniumGridHelper.SetTestSetting(4,
+             
+            GridHelper.SetTestSetting(4,
                 "localReportGrid",
                 "test",
                 "testUpdated",
@@ -49,6 +60,7 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id" ,Required= true},
                     new ColumnsToEdit() {ColumnNum = 3, ColumnName = "Description"}
                 },
+                null,
                 new List<DropDownsToEdit>()
                 {
                     new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 2, selectedValue = 1 },
@@ -56,15 +68,15 @@ namespace Selenium
                     new DropDownsToEdit() {ContainsEmptyValue = true, ColumnNum = 5, selectedValue = 1 }
                 });
 
+            GridHelper.ChangeTaxonomyDropDown();
 
-            SeleniumGridHelper.ChangeTaxonomyDropDown();
-            SeleniumGridHelper.TestGrid();
+            GridHelper.TestGrid();
         }
 
         [TestMethod]
         public void Test2_TaxonomyReports()
         {
-            SeleniumGridHelper.SetTestSetting(3,
+            GridHelper.SetTestSetting(3,
                 "taxonomyReportGrid",
                 "test",
                 "testUpdated",
@@ -79,21 +91,24 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 5, ColumnName = "FileName",Required= true},
                     new ColumnsToEdit() {ColumnNum = 6, ColumnName = "EntitySchema",Required= true},
                     new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntityIdentifire",Required= true},
+                }, 
+                new List<string>()
+                {
+                     "EntityIdentifire"
                 },
                 new List<DropDownsToEdit>()
                 {
                     new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 3, selectedValue = 1 },
-                });
+                }); 
 
-
-            SeleniumGridHelper.ChangeTaxonomyDropDown();
-            SeleniumGridHelper.TestGrid();
+            GridHelper.ChangeTaxonomyDropDown();
+            GridHelper.TestGrid();
         }
 
         [TestMethod]
         public void Test3_TaxonomyEntity()
         {
-            SeleniumGridHelper.SetTestSetting(1,
+            GridHelper.SetTestSetting(1,
                 "taxonomyGrid",
                 "test",
                 "testUpdated",
@@ -109,17 +124,18 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 6, ColumnName = "Decimals",Required= true},
                     new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntitySchema",Required= true},
                     new ColumnsToEdit() {ColumnNum = 9, ColumnName = "TnProcessorId",Required= true},
-                },
+                }, 
+                null,
                 null);
 
-            SeleniumGridHelper.TestGrid();
+            GridHelper.TestGrid();
 
         }
 
         [TestMethod]
         public void Test4_localEntityGrid()
         {
-            SeleniumGridHelper.SetTestSetting(2,
+            GridHelper.SetTestSetting(2,
                 "localEntityGrid",
                 "test",
                 "testUpdated",
@@ -131,25 +147,69 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 1, ColumnName = "Id",Required= true},
                     new ColumnsToEdit() {ColumnNum = 2, ColumnName = "Description",Required= true},
                 },
+                 null,
                 null);
 
-            SeleniumGridHelper.TestGrid();
+            GridHelper.TestGrid();
 
             SeleniumDriver.driver.Quit();
         }
 
-        [TestMethod]
-        public void CheckFileDownloaded()
-        {
 
-            if (!FileDownloadHelper.CheckFileDownloaded("XBRL"))
-            {
-                Assert.Fail("File not Downloaded");
-            }
+        //[TestMethod]
+        //public void CheckFileDownloaded()
+        //{
 
-            SeleniumDriver.driver.Quit();
-            SeleniumDriver.driver.Dispose();
+        //    if (!FileDownloadHelper.CheckFileDownloaded("XBRL"))
+        //    {
+        //        Assert.Fail("File not Downloaded");
+        //    }
 
-        }
+        //    SeleniumDriver.driver.Quit();
+        //    SeleniumDriver.driver.Dispose();
+
+        //}
+
+
+
+       [TestMethod] 
+        public void XbrlAdminServer()
+        { 
+            AdminPageHelper.OpenAdminPage();
+
+            AdminPageHelper.TaxonomyList = new List<string>() {
+                "גרסה 5.0 בנק ישראל", "גרסה 4.0 בנק ישראל", "גרסה 3.2 בנק ישראל", "גרסה 3.1 בנק ישראל", "גרסה 2.1 בנק ישראל", "גרסה 5.1.1 בנק ישראל"
+            };
+
+            AdminPageHelper.RolesToAdd = new List<int>() { 1, 2 };
+
+            GridHelper.TabId = "AdminTabs";
+
+            GridHelper.SetTestSetting(1,
+              "entitiesGrid",
+              "test",
+              "testUpdated",
+              "",
+              0,
+              true,
+              new List<ColumnsToEdit>()
+              {
+                    new ColumnsToEdit() {ColumnNum = 0, ColumnName = "EntityName" ,Required= true}
+              },
+               null,
+              new List<DropDownsToEdit>()
+              {
+                    new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 1, selectedValue = 0}
+              });
+
+
+            AdminPageHelper.SwitchToIframe();
+             
+            AdminPageHelper.AddRolesToEntity(); 
+
+        } 
+       
     }
 }
+
+
