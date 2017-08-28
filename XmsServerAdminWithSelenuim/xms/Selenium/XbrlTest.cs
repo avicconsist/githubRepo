@@ -20,8 +20,6 @@ namespace Selenium
         // tabs elmentId ???  (tabstrip || AdminTabs)
 
 
-
-
         public XbrlTest()
         {
             if (SeleniumDriver.driver == null)
@@ -47,7 +45,7 @@ namespace Selenium
         [TestMethod]
         public void Test1_LocalTaxonomyReports()
         {
-             
+
             GridHelper.SetTestSetting(4,
                 "localReportGrid",
                 "test",
@@ -91,7 +89,7 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 5, ColumnName = "FileName",Required= true},
                     new ColumnsToEdit() {ColumnNum = 6, ColumnName = "EntitySchema",Required= true},
                     new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntityIdentifire",Required= true},
-                }, 
+                },
                 new List<string>()
                 {
                      "EntityIdentifire"
@@ -99,7 +97,7 @@ namespace Selenium
                 new List<DropDownsToEdit>()
                 {
                     new DropDownsToEdit() {ContainsEmptyValue = false, ColumnNum = 3, selectedValue = 1 },
-                }); 
+                });
 
             GridHelper.ChangeTaxonomyDropDown();
             GridHelper.TestGrid();
@@ -124,7 +122,7 @@ namespace Selenium
                     new ColumnsToEdit() {ColumnNum = 6, ColumnName = "Decimals",Required= true},
                     new ColumnsToEdit() {ColumnNum = 7, ColumnName = "EntitySchema",Required= true},
                     new ColumnsToEdit() {ColumnNum = 9, ColumnName = "TnProcessorId",Required= true},
-                }, 
+                },
                 null,
                 null);
 
@@ -154,27 +152,59 @@ namespace Selenium
 
             SeleniumDriver.driver.Quit();
         }
+         
+        [TestMethod]
+        public void CheckMainPage()
+        {
+            GridHelper.IframeInContainerId = "";
+            MainPageHelper.periodTypes = new List<string>()
+            {
+                "חודשי",
+                "רבעוני",
+                "שנתי",
+                "חצי-שנתי",
+                "מיידי"
+            };
+
+            MainPageHelper.CheckUpperBarAndFilters();
+            MainPageHelper.PeriodTypeFilter();
 
 
-        //[TestMethod]
-        //public void CheckFileDownloaded()
-        //{
+        }
 
-        //    if (!FileDownloadHelper.CheckFileDownloaded("XBRL"))
-        //    {
-        //        Assert.Fail("File not Downloaded");
-        //    }
+        [TestMethod]
+        public void CreateReport()
+        {
+            GridHelper.IframeInContainerId = "adminModal";
 
-        //    SeleniumDriver.driver.Quit();
-        //    SeleniumDriver.driver.Dispose();
+            FileDownloadHelper.DownloadEmptyTempletAndUpdate();
 
-        //}
+            FileDownloadHelper.CheckTempletsList();
 
+            FileDownloadHelper.DeleteTemplet();
 
+            FileDownloadHelper.DownloadReport();
 
-       [TestMethod] 
+            FileDownloadHelper.UploadEditedExcelReport();
+        }
+
+        [TestMethod]
+        public void CheckFileDownloaded()
+        {
+
+            if (!FileDownloadHelper.CheckFileDownloaded("XBRL"))
+            {
+                Assert.Fail("File not Downloaded");
+            }
+
+            SeleniumDriver.driver.Quit();
+            SeleniumDriver.driver.Dispose();
+
+        } 
+
+        [TestMethod]
         public void XbrlAdminServer()
-        { 
+        {
             AdminPageHelper.OpenAdminPage();
 
             AdminPageHelper.TaxonomyList = new List<string>() {
@@ -203,13 +233,15 @@ namespace Selenium
               });
 
 
-            AdminPageHelper.SwitchToIframe();
-             
-            AdminPageHelper.AddRolesToEntity(); 
+            AdminPageHelper.SwitchToIframeInContainerId("adminModal");
 
-        } 
-       
+            AdminPageHelper.AddRolesToEntity();
+
+            SeleniumDriver.driver.Quit();
+        }
+
     }
 }
+
 
 

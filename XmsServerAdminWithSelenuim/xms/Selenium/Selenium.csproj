@@ -70,6 +70,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Common\MainPageHelper.cs" />
     <Compile Include="Common\FileDownloadHelper.cs" />
     <Compile Include="Common\AdminPageHelper.cs" />
     <Compile Include="Common\WaitHelper.cs" />

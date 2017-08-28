@@ -20,6 +20,7 @@ namespace Selenium.Common
         public static string DropDownTaxonomyName { get; set; }
         public static IList<IWebElement> RowTD { get; set; }
         public static string GridId { get; set; }
+        public static string IframeInContainerId { get; set; }
         public static string RowId { get; set; }
         public static string NewRowId { get; set; }
         public static string ActiveRow { get; set; }
@@ -130,7 +131,7 @@ namespace Selenium.Common
 
         }
 
-        public static bool IsRowExists(bool containBtnLastPage= true )
+        public static bool IsRowExists(bool containBtnLastPage= true)
         {
             var rowExists = FindRow();
 
@@ -143,6 +144,7 @@ namespace Selenium.Common
                     goToLastPage.Click();
 
                     rowExists = FindRow();
+                  
                 }
 
                 if (rowExists == null)
@@ -152,6 +154,36 @@ namespace Selenium.Common
             }
 
             return true;
+        }
+
+        public static IWebElement GetRow()
+        {
+            var rowExists = FindRow();
+
+            if (rowExists == null)
+            {
+                try
+                {
+                    var goToLastPage = SeleniumDriver.driver.FindElement(By.ClassName("k-pager-last"));
+
+                    goToLastPage.Click();
+
+                    rowExists = FindRow();
+                    return rowExists;
+
+                }
+                catch (Exception)
+                {
+                    
+                }
+
+                if (rowExists == null)
+                {
+                    return null;
+                } 
+            }
+
+            return null;
         }
 
         public static IWebElement FindRow()
@@ -171,14 +203,22 @@ namespace Selenium.Common
                     rowTdText = RowTD[ColumnsToEdit[0].ColumnNum].Text;
                 }
                 else
-                {
-                    rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text;
+                { 
+                    if (ColumnsToEdit!=null)
+                    {
+                        rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text; 
+                    }
+                    else
+                    {
+                        rowTdText = RowTD[0].Text;
+                    }
                 }
                 if (rowTdText.Equals(RowId))
                 {
                     return row;
                 }
             }
+            
             return null;
         }
 
@@ -363,10 +403,10 @@ namespace Selenium.Common
         public static void RefreshPage()
         {
             SeleniumDriver.driver.Navigate().Refresh();
-
-
+             
             AdminPageHelper.AdminButtonClick();
-            AdminPageHelper.SwitchToIframe();
+            
+            AdminPageHelper.SwitchToIframeInContainerId(IframeInContainerId);
 
             GoToActiveTab();
 
@@ -428,7 +468,9 @@ namespace Selenium.Common
         {
             BtnClick("Delete");
             ConfrimButtonClick(false);
-            RowId = NewRowId;
+            if (NewRowId!=null)
+                RowId = NewRowId;
+
             //Is the new row exists in table
             if (!IsRowExists())
             {
@@ -570,11 +612,18 @@ namespace Selenium.Common
                     rowTdText = RowTD[RowTD.Count - 1].Text;
                 }
 
-                if (ColumnsToEdit.Count > 1)
+                if (ColumnsToEdit!=null)
                 {
-                    rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text;
+                    if (ColumnsToEdit.Count > 1)
+                    {
+                        rowTdText = RowTD[ColumnsToEdit[1].ColumnNum].Text;
+                    }
                 }
-
+                else
+                {
+                    rowTdText = RowTD[0].Text;
+                }
+                  
                 IList<IWebElement> buttons = row.FindElements(By.TagName("a"));
                 if (UpdateIdColumn)
                 {

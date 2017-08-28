@@ -67,10 +67,11 @@ namespace Selenium.Common
             
         }
          
-        public static void SwitchToIframe()
+        public static void SwitchToIframeInContainerId(string containerid)
         {
             //find the outer frame, and use switch to frame method
-            IWebElement containerFrame = SeleniumDriver.driver.FindElement(By.TagName("iframe"));
+             IWebElement container  = SeleniumDriver.driver.FindElement(By.Id(containerid));
+            IWebElement containerFrame = container.FindElement(By.TagName("iframe"));
             SeleniumDriver.driver.SwitchTo().Frame(containerFrame);
         }
 

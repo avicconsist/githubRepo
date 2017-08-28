@@ -34,6 +34,7 @@ namespace Selenium.Common
 
         public static void WaitUntilTableIsVisible(string gridId)
         {
+            Wait.Until(ExpectedConditions.ElementIsVisible(By.Id(gridId)));
             var grid = SeleniumDriver.driver.FindElement(By.Id(gridId));
             Wait.Until(ExpectedConditions.ElementToBeClickable(grid));
             var table = grid.FindElement(By.TagName("table"));
